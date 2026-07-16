@@ -220,6 +220,7 @@ export default function Home() {
   const [isVoiceCoachActive, setIsVoiceCoachActive] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [recoveryCoordinates, setRecoveryCoordinates] = useState<[number, number, number, number] | null>(null);
+  const [sosCopied, setSosCopied] = useState<boolean>(false);
 
   // General Loading & Error
   const [isLoading, setIsLoading] = useState(false);
@@ -522,6 +523,44 @@ export default function Home() {
 
   const handleSkipStep = () => {
     handleNextStep();
+  };
+
+  const loadPresetScreenshot = (presetNum: number) => {
+    let svgContent = '';
+    if (presetNum === 1) {
+      svgContent = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%231e293b"/><text x="40" y="60" fill="%23ffffff" font-family="sans-serif" font-size="20" font-weight="bold">정부24 민원 서류 신청 화면 (샘플)</text><rect x="40" y="100" width="520" height="2" fill="%23334155"/><text x="40" y="150" fill="%2394a3b8" font-family="sans-serif" font-size="14">현재 상태: 본인 인증 및 전자 서명 단계</text><rect x="40" y="180" width="340" height="48" rx="6" fill="%23334155" stroke="%23475569" stroke-width="2"/><text x="60" y="210" fill="%23ffffff" font-family="sans-serif" font-size="14">주민등록 등본 교부 신청</text><rect x="400" y="180" width="160" height="48" rx="6" fill="%232563eb"/><text x="445" y="210" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold">인증 확인</text><rect x="40" y="250" width="520" height="110" rx="8" fill="%23ef4444" fill-opacity="0.1" stroke="%23ef4444" stroke-width="1.5"/><text x="60" y="285" fill="%23fca5a5" font-family="sans-serif" font-size="14" font-weight="bold">⚠️ 오류: 간편인증 모듈 호출에 실패했습니다.</text><text x="60" y="315" fill="%23fca5a5" font-family="sans-serif" font-size="12">브라우저 쿠키 설정 혹은 팝업 차단이 활성화되어 있는지 확인해 주십시오.</text><text x="60" y="335" fill="%23fca5a5" font-family="sans-serif" font-size="12">오류 코드: AUTH_ERR_403</text></svg>`;
+      setSelectedProblem('오류 메시지나 경고창이 나타났어요');
+    } else {
+      svgContent = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%230f172a"/><text x="40" y="60" fill="%2338bdf8" font-family="sans-serif" font-size="22" font-weight="bold">Google Cloud Jam - 프로젝트 업로드</text><rect x="40" y="90" width="520" height="1.5" fill="%231e293b"/><text x="40" y="130" fill="%2394a3b8" font-family="sans-serif" font-size="14">최종 과제물 세 가지 요소를 업로드해 주십시오.</text><rect x="40" y="160" width="520" height="140" rx="8" fill="%231e293b" stroke="%23334155" stroke-dasharray="4 4"/><text x="180" y="220" fill="%2394a3b8" font-family="sans-serif" font-size="15" font-weight="bold">📂 여기에 데모 영상 및 코드 파일 끌어다 놓기</text><text x="210" y="250" fill="%2364748b" font-family="sans-serif" font-size="13">지원 규격: mp4, zip, pdf (최대 100MB)</text><rect x="360" y="320" width="200" height="48" rx="24" fill="%232563eb"/><text x="410" y="350" fill="%23ffffff" font-family="sans-serif" font-size="15" font-weight="bold">제출 완료하기 🚀</text></svg>`;
+      setSelectedProblem('버튼이나 메뉴가 안 보여요');
+    }
+    
+    setScreenshotFile({
+      data: svgContent,
+      mimeType: 'image/svg+xml'
+    });
+    setRecoveryError('');
+  };
+
+  const handleCopyFamilySOS = () => {
+    if (!generatedData || !currentStep) return;
+    const message = `[StepCue 부모님 안심 SOS 🚨]
+아들/딸아, 엄마/아빠가 휴대폰으로 "[${goal}]"을(를) 하던 중에 막혀서 도움이 필요해!
+
+- 현재 단계: ${currentStepIndex + 1}단계 (${currentStep.action})
+- 찾아볼 화면 위치: "${currentStep.screenAnchor}"
+- 발생한 문제 유형: "${selectedProblem || '화면 불일치'}"
+- 인공지능 임시 조치법: "${customRecoveryGuidance}"
+
+이 화면 사진이랑 조치법 같이 보고 카톡이나 전화로 좀 알려주면 고맙겠구나. ❤️
+(StepCue 시니어 안심 돌봄망)`;
+
+    navigator.clipboard.writeText(message).then(() => {
+      setSosCopied(true);
+      setTimeout(() => setSosCopied(false), 5000);
+    }).catch(err => {
+      console.error('Failed to copy SOS text: ', err);
+    });
   };
 
   const restartApp = () => {
@@ -959,6 +998,42 @@ export default function Home() {
                           </div>
                         </div>
                       )}
+
+                      {/* Concept 5: Family SOS Shared Copier */}
+                      {screenshotFile && (
+                        <div style={{
+                          marginTop: '16px',
+                          padding: '12px 16px',
+                          backgroundColor: '#f0fdf4',
+                          border: '1px solid #bbf7d0',
+                          borderRadius: 'var(--radius-sm)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          width: '100%'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '15px', fontWeight: 800, color: '#166534' }}>👨‍👩‍👧‍👦 우리 아이 폰으로 SOS 도움 구하기</span>
+                            <span style={{ fontSize: '12px', fontWeight: 700, backgroundColor: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '12px' }}>효도 안심망 ❤️</span>
+                          </div>
+                          <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
+                            도무지 막혀서 어렵다면, 인공지능의 처방 내역과 캡처 화면을 자녀에게 카카오톡으로 간편히 전송해 물어보실 수 있습니다.
+                          </p>
+                          <button
+                            type="button"
+                            className="btn btn-success"
+                            style={{ height: '40px', fontSize: '14px', alignSelf: 'flex-start', marginTop: '4px' }}
+                            onClick={handleCopyFamilySOS}
+                          >
+                            💬 카카오톡 전송용 SOS 메시지 복사하기
+                          </button>
+                          {sosCopied && (
+                            <span style={{ fontSize: '13px', color: '#15803d', fontWeight: 700, animation: 'pulse 1s infinite' }}>
+                              ✓ 카톡 전송용 글자가 복사되었습니다! 자녀분과의 대화창에 붙여넣기(Ctrl+V) 하세요! 💌
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1118,6 +1193,31 @@ export default function Home() {
                   <span>{option}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Option A: Demo Screen Presets for Easy Judging */}
+            <div className="form-group" style={{ marginBottom: '16px', marginTop: '12px' }}>
+              <label className="form-label" style={{ fontSize: '15px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
+                💡 심사위원 및 테스트용 화면 캡처 추천 (원클릭 등록)
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  style={{ fontSize: '13px', padding: '10px', height: 'auto', border: '1px dashed var(--warning)', backgroundColor: '#fff7ed', fontWeight: 600, color: 'var(--warning)' }}
+                  onClick={() => loadPresetScreenshot(1)}
+                >
+                  📝 예시 1: 서류 발급 경고창 캡처
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  style={{ fontSize: '13px', padding: '10px', height: 'auto', border: '1px dashed var(--primary)', backgroundColor: '#eff6ff', fontWeight: 600, color: 'var(--primary)' }}
+                  onClick={() => loadPresetScreenshot(2)}
+                >
+                  🚀 예시 2: 해커톤 프로젝트 제출 캡처
+                </button>
+              </div>
             </div>
 
             {/* Screenshot file upload */}
