@@ -4,6 +4,9 @@
 >
 > **StepCue** is a premium, accessibility-focused web application designed to bridge the digital divide for older adults and tech beginners. Powered by **Google Gemini 1.5 Flash**, it translates complex online tasks into simplified, distraction-free "Single-Action Cards" combined with interactive multi-modal spotlight coordination and voice assistance.
 
+## 🌐 Live Demo (실제 배포 링크)
+### 👉 [https://stepcue-380746511082.us-central1.run.app/](https://stepcue-380746511082.us-central1.run.app/)
+
 ---
 
 ## 🎯 Key Core Features (핵심 기능)
