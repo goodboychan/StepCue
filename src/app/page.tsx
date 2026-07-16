@@ -216,6 +216,11 @@ export default function Home() {
   // Custom Recovery Guidance (returned from API)
   const [customRecoveryGuidance, setCustomRecoveryGuidance] = useState<string | null>(null);
 
+  // Concept 2 & 3: Voice Coach and Coordinate Highlighting
+  const [isVoiceCoachActive, setIsVoiceCoachActive] = useState<boolean>(false);
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [recoveryCoordinates, setRecoveryCoordinates] = useState<[number, number, number, number] | null>(null);
+
   // General Loading & Error
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -223,6 +228,95 @@ export default function Home() {
   // Refs for file inputs
   const guideFileInputRef = useRef<HTMLInputElement>(null);
   const screenshotFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Voice Coach Text-To-Speech Effect
+  React.useEffect(() => {
+    if (appState === 'CARDS' && isVoiceCoachActive && generatedData && generatedData.cards[currentStepIndex]) {
+      const card = generatedData.cards[currentStepIndex];
+      let text = `현재 단계는 ${currentStepIndex + 1}단계입니다. 해야 할 행동은, ${card.action} 입니다. 화면에서 ${card.screenAnchor}를 찾아 완료 기준을 확인해 보세요.`;
+      
+      if (customRecoveryGuidance) {
+        text = `화면 맞춤 처방이 등록되었습니다. ${customRecoveryGuidance}`;
+      }
+
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ko-KR';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    } else {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [currentStepIndex, appState, isVoiceCoachActive, generatedData, customRecoveryGuidance]);
+
+  // Voice Commands Control (Speech Recognition)
+  React.useEffect(() => {
+    let recognition: any = null;
+    
+    if (appState === 'CARDS' && isListening && typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = false;
+          recognition.lang = 'ko-KR';
+          
+          recognition.onresult = (event: any) => {
+            const last = event.results.length - 1;
+            const command = event.results[last][0].transcript.trim();
+            console.log('Voice Command received:', command);
+            
+            const speakConfirmation = (msg: string) => {
+              if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(msg);
+                utterance.lang = 'ko-KR';
+                window.speechSynthesis.speak(utterance);
+              }
+            };
+
+            if (command.includes('다음') || command.includes('완료') || command.includes('했어') || command.includes('성공')) {
+              handleNextStep();
+              speakConfirmation('다음 단계로 넘어갑니다.');
+            } else if (command.includes('이전') || command.includes('뒤로') || command.includes('돌아가')) {
+              handlePrevStep();
+              speakConfirmation('이전 단계로 돌아갑니다.');
+            } else if (command.includes('도와줘') || command.includes('달라') || command.includes('이상해') || command.includes('막혔어')) {
+              setShowRecoverySheet(true);
+              speakConfirmation('화면 맞춤 처방 창을 열었습니다. 눈앞의 화면을 사진으로 찍어서 올려주시면 새로운 해결법을 분석해 드릴게요.');
+            } else if (command.includes('다시') || command.includes('읽어줘')) {
+              const card = generatedData?.cards[currentStepIndex];
+              if (card) {
+                speakConfirmation(`다시 읽어드릴게요. 현재 행동은 ${card.action} 이며, 찾아볼 부분은 ${card.screenAnchor} 입니다.`);
+              }
+            }
+          };
+          
+          recognition.onerror = (e: any) => {
+            console.error('Speech recognition error:', e);
+          };
+          
+          recognition.start();
+        } catch (e) {
+          console.error('Failed to start speech recognition:', e);
+        }
+      } else {
+        console.warn('SpeechRecognition is not supported in this browser.');
+        setIsListening(false);
+      }
+    }
+    
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [appState, isListening, currentStepIndex, generatedData]);
 
   // Analyzing screen dynamic steps simulation
   const [analyzingStep, setAnalyzingStep] = useState(0);
@@ -373,6 +467,13 @@ export default function Home() {
       if (result.success) {
         setCustomRecoveryGuidance(result.recoveryAction);
         
+        // Save element coordinates if found on screenshot
+        if (result.elementCoordinates && result.elementCoordinates.length === 4) {
+          setRecoveryCoordinates(result.elementCoordinates);
+        } else {
+          setRecoveryCoordinates(null);
+        }
+        
         // If Gemini returned an updated step action based on screenshot, update it in state
         if (result.updatedStep && generatedData) {
           const updatedCards = [...generatedData.cards];
@@ -401,6 +502,7 @@ export default function Home() {
   const handleNextStep = () => {
     if (!generatedData) return;
     setCustomRecoveryGuidance(null); // Clear previous recovery instructions
+    setRecoveryCoordinates(null);   // Clear previous coordinates
     if (currentStepIndex < generatedData.cards.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
       setShowSource(false);
@@ -414,6 +516,7 @@ export default function Home() {
       setCurrentStepIndex(currentStepIndex - 1);
       setShowSource(false);
       setCustomRecoveryGuidance(null);
+      setRecoveryCoordinates(null);
     }
   };
 
@@ -430,6 +533,7 @@ export default function Home() {
     setAppState('INPUT');
     setCustomRecoveryGuidance(null);
     setScreenshotFile(null);
+    setRecoveryCoordinates(null);
     setSelectedProblem('');
   };
 
@@ -657,6 +761,47 @@ export default function Home() {
             {/* Main Action Card block */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
+              {/* Concept 2: Voice Control Settings Panel */}
+              <div style={{ 
+                display: 'flex', 
+                gap: '12px', 
+                flexWrap: 'wrap', 
+                backgroundColor: 'white', 
+                padding: '16px', 
+                borderRadius: 'var(--radius-sm)', 
+                border: '1px solid var(--border)',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-muted)' }}>🎙️ 시니어 보이스 안심 도우미</span>
+                <button 
+                  type="button"
+                  className={`chip ${isVoiceCoachActive ? 'active' : ''}`}
+                  onClick={() => setIsVoiceCoachActive(!isVoiceCoachActive)}
+                  style={{ height: '40px', padding: '0 16px', borderRadius: '20px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span>{isVoiceCoachActive ? '🔊 소리 내서 안내 중' : '🔇 소리 안내 켜기'}</span>
+                </button>
+                <button 
+                  type="button"
+                  className={`chip ${isListening ? 'active' : ''}`}
+                  onClick={() => setIsListening(!isListening)}
+                  style={{ height: '40px', padding: '0 16px', borderRadius: '20px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span style={{ 
+                    display: 'inline-block', 
+                    width: '8px', 
+                    height: '8px', 
+                    backgroundColor: isListening ? '#ef4444' : '#9ca3af', 
+                    borderRadius: '50%',
+                    animation: isListening ? 'pulse 1.5s infinite' : 'none'
+                  }}></span>
+                  <span>{isListening ? '🎤 네, 말씀하세요' : '🎤 말로 움직이기'}</span>
+                </button>
+                <p style={{ fontSize: '12px', color: 'var(--text-light)', width: '100%', margin: '4px 0 0 4px', fontWeight: 500 }}>
+                  * 마이크를 켜고 "다음", "이전", "도와줘", "다시" 라고 말해서 화면을 제어할 수 있어요.
+                </p>
+              </div>
+
               {/* Progress bar info */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 600, color: 'var(--text-muted)' }}>
@@ -744,9 +889,76 @@ export default function Home() {
                       <div className="card-section-title" style={{ color: 'var(--primary)' }}>
                         🛠️ 현재 화면 맞춤 처방
                       </div>
-                      <div className="card-section-content" style={{ fontWeight: 600 }}>
+                      <div className="card-section-content" style={{ fontWeight: 600, marginBottom: '12px' }}>
                         {customRecoveryGuidance}
                       </div>
+
+                      {/* Concept 3: Visual Arrow Spotlight Annotation Overlay */}
+                      {screenshotFile && recoveryCoordinates && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', marginTop: '12px' }}>
+                          <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--warning)', alignSelf: 'flex-start' }}>
+                            📍 인공지능이 찾아낸 화면 위치 (아래 밝은 영역을 클릭하세요):
+                          </span>
+                          <div style={{ 
+                            position: 'relative', 
+                            borderRadius: '12px', 
+                            overflow: 'hidden', 
+                            border: '3px solid var(--warning)', 
+                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                            maxWidth: '100%',
+                            display: 'inline-block'
+                          }}>
+                            <img 
+                              src={screenshotFile.data} 
+                              alt="Spotlight target" 
+                              style={{ display: 'block', maxWidth: '100%', height: 'auto', maxHeight: '350px' }} 
+                            />
+                            {/* Dark Spotlight overlay using huge box-shadow */}
+                            <div style={{
+                              position: 'absolute',
+                              border: '4px solid #ef4444',
+                              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.65)',
+                              borderRadius: '6px',
+                              top: `${recoveryCoordinates[0] / 10}%`,
+                              left: `${recoveryCoordinates[1] / 10}%`,
+                              height: `${(recoveryCoordinates[2] - recoveryCoordinates[0]) / 10}%`,
+                              width: `${(recoveryCoordinates[3] - recoveryCoordinates[1]) / 10}%`,
+                              pointerEvents: 'none',
+                              transition: 'all 0.5s ease-in-out'
+                            }} />
+                            {/* Pulse indicator target */}
+                            <div style={{
+                              position: 'absolute',
+                              top: `${(recoveryCoordinates[0] + recoveryCoordinates[2]) / 20}%`,
+                              left: `${(recoveryCoordinates[1] + recoveryCoordinates[3]) / 20}%`,
+                              transform: 'translate(-50%, -50%)',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              padding: '6px 12px',
+                              borderRadius: '20px',
+                              fontSize: '13px',
+                              fontWeight: 'bold',
+                              pointerEvents: 'none',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              <span style={{ 
+                                display: 'inline-block', 
+                                width: '6px', 
+                                height: '6px', 
+                                backgroundColor: 'white', 
+                                borderRadius: '50%', 
+                                animation: 'pulse 1s infinite' 
+                              }}></span>
+                              {currentStep.screenAnchor} 위치 📍
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

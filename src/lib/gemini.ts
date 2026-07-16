@@ -151,7 +151,11 @@ export async function recoverStepAction(params: {
   currentStep: ActionCard;
   problemOption: string;
   screenshot?: { data: string; mimeType: string };
-}): Promise<{ recoveryAction: string; updatedStep?: Partial<ActionCard> }> {
+}): Promise<{ 
+  recoveryAction: string; 
+  updatedStep?: Partial<ActionCard>; 
+  elementCoordinates?: [number, number, number, number] | null;
+}> {
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured on the server.');
   }
@@ -173,6 +177,9 @@ The user reports this problem: "${problemOption}"
 Provide:
 1. "recoveryAction": A clear, helpful instruction explaining how to recover or bypass this problem. If there is a screenshot, analyze what the user is seeing and explain step-by-step how to navigate back or resolve the mismatch.
 2. "updatedStep": (Optional) If the user's screen looks different and you can identify the correct button/menu/anchor from the screenshot, provide an updated "action" and "screenAnchor" to replace the current step's details.
+3. "elementCoordinates": (Optional) If there is an uploaded screenshot, detect the bounding box of the physical element/button/input described in the Screen Anchor ("${currentStep.screenAnchor}") or the target button for the action. 
+   Return the coordinates as a 4-element array [ymin, xmin, ymax, xmax] normalized to 1000 (0 to 1000 where 1000 is the full height/width). 
+   For example, [350, 200, 410, 450] means the button is located in the middle left. Return null if you cannot find the element in the screenshot.
 
 Return your response in JSON format.
 `;
@@ -208,6 +215,11 @@ Return your response in JSON format.
                 screenAnchor: { type: 'STRING' },
               },
               required: ['action', 'screenAnchor'],
+            },
+            elementCoordinates: {
+              type: 'ARRAY',
+              description: 'Coordinates [ymin, xmin, ymax, xmax] normalized between 0-1000.',
+              items: { type: 'INTEGER' },
             },
           },
           required: ['recoveryAction'],
