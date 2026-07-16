@@ -66,7 +66,7 @@ To make the technical demonstration exceptionally smooth and amplify our social 
 *   **Problem Solved**: Judges may not have a relevant smart device screenshot ready on their test computers, hindering their ability to test the multi-modal spotlight coordination mapping.
 *   **Implementation**: Inside the Recovery Bottom Sheet, we added two pre-packaged **Demo Preset Buttons** that load text-based, high-fidelity SVGs as base64 images representing mock smartphone displays:
     1.  *Preset 1 (정부24 민원 서류 발급 경고창)*: Simulates a certificate authentication failure with a red alert banner.
-    2.  *Preset 2 (구글 클라우드 해커톤 제출 헤맴 화면)*: Simulates a drag-and-drop submission box with a blue upload button.
+    2.  *Preset 2 (기후동행카드 은행계좌 인증 오류)*: Simulates a Seoul Climate Card refund application form where bank account name validation fails (such as using a child's account instead of the registered card user's), displaying a red mismatch error box.
 *   **Result**: Judges can test the full, end-to-end Gemini screen annotation pipeline and coordinate spotlight with **just one click**, making our technical demo highly reliable, stable, and foolproof.
 
 ### 4. 👨‍👩‍👧‍👦 Family SOS Care Network (Option B)
