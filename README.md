@@ -2,7 +2,7 @@
 
 > **"단 한 걸음의 카드"** — 시니어와 디지털 약자를 위한 구글 제미나이(Gemini) 기반 1인칭 가이드 오버레이 스크린.
 >
-> **StepCue** is a premium, accessibility-focused web application designed to bridge the digital divide for older adults and tech beginners. Powered by **Google Gemini 1.5 Flash**, it translates complex online tasks into simplified, distraction-free "Single-Action Cards" combined with interactive multi-modal spotlight coordination and voice assistance.
+> **StepCue** is a premium, accessibility-focused web application designed to bridge the digital divide for older adults and tech beginners. Powered by **Google Gemini 3.5 Flash**, it translates complex online tasks into simplified, distraction-free "Single-Action Cards" combined with interactive multi-modal spotlight coordination and voice assistance.
 
 ## 🌐 Live Demo (실제 배포 링크)
 ### 👉 [https://stepcue-380746511082.us-central1.run.app/](https://stepcue-380746511082.us-central1.run.app/)
@@ -11,7 +11,7 @@
 
 ## 🎯 Key Core Features (핵심 기능)
 
-1. **✨ Gemini 1.5 Flash AI Guide Generator**
+1. **✨ Gemini 3.5 Flash AI Guide Generator**
    * 입력된 목표와 가이드 텍스트를 분석하여, 인지 과부하를 유발하지 않는 **3~8단계의 초간결 단일 액션 카드**로 변환합니다. (Zod / JSON Schema 구조화 명세 적용)
 2. **🗣️ Interactive Voice Coach (음성 동반자)**
    * Web Speech API (`SpeechSynthesis`)를 연동하여 어르신에게 친숙하고 정서적으로 편안한 한국어 음성(여성/남성/구글 고음질) 선택 기능을 지원하며, 손쉬운 음성 인식 제어(`SpeechRecognition`)를 함께 연동했습니다.
@@ -77,7 +77,7 @@ npm run dev
 ## 🏆 Hackathon Tracks & Impact
 
 * **Track Selection**: **Google AI for Social Good (사회적 약자 구출 트랙)**
-* **Technical Excellence**: Gemini 1.5 Flash의 비전 분석과 CSS 스포트라이트를 동적으로 연계하여, 기존의 텍스트 기반 AI 챗봇의 한계를 깨고 시각적/물리적인 '스포트라이트 조준 조명'이라는 극상의 실용성을 제공합니다.
+* **Technical Excellence**: Gemini 3.5 Flash의 비전 분석과 CSS 스포트라이트를 동적으로 연계하여, 기존의 텍스트 기반 AI 챗봇의 한계를 깨고 시각적/물리적인 '스포트라이트 조준 조명'이라는 극상의 실용성을 제공합니다.
 
 ---
 

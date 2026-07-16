@@ -5,7 +5,7 @@
 | **Product Name** | **StepCue (스텝큐)** |
 | **Product Version** | v1.1.0 (Hackathon Release) |
 | **Hackathon Track** | **Google AI for Social Good** (사회적 가치 및 디지털 약자 지원) |
-| **Core Technology** | Next.js, Google Gemini 1.5 Flash API, HTML5 Web Speech API (TTS/STT) |
+| **Core Technology** | Next.js, Google Gemini 3.5 Flash API, HTML5 Web Speech API (TTS/STT) |
 | **Target Audience** | 디지털 환경에 서툰 시니어(50대~80대) 및 부모님을 돕고자 하는 자녀 세대 |
 
 ---
@@ -43,7 +43,7 @@ StepCue는 **구글 제미나이(Google Gemini)의 고도화된 의미론적 언
 
 ```mermaid
 graph TD
-    A[사용자 시나리오 입력 / 음성/텍스트] -->|Next.js App Router| B(Google Gemini 1.5 Flash)
+    A[사용자 시나리오 입력 / 음성/텍스트] -->|Next.js App Router| B(Google Gemini 3.5 Flash)
     B -->|Structured JSON Parsing| C[시니어 맞춤형 안심 액션 카드 생성]
     
     subgraph "Core Senior Interaction Flow (page.tsx)"
@@ -64,7 +64,7 @@ graph TD
 *   **Frontend**: Next.js 14 (React, App Router, TypeScript)
 *   **Styling**: Vanilla CSS (CSS Variables 기반 프리미엄 디자인 시스템 구축)
 *   **Artificial Intelligence**: 
-    *   **Google Gemini 1.5 Flash**: 고성능 언어 이해 모델로 시나리오 세분화, 좌표 검출(Object Detection) 수행.
+    *   **Google Gemini 3.5 Flash**: 고성능 언어 이해 모델로 시나리오 세분화, 좌표 검출(Object Detection) 수행.
     *   **HTML5 Web Speech API**:
         *   `SpeechSynthesis`를 사용한 다감각 한국어 음성 도우미 (TTS).
         *   `webkitSpeechRecognition`을 사용한 음성 컨트롤러 (STT).
@@ -73,7 +73,7 @@ graph TD
 ### 3.2 GEAR (Gemini Enterprise Agent Ready) 프레임워크 설계 표준 준수
 StepCue는 단순히 문답을 주고받는 정적인 챗봇 형태를 탈피하여, 사용자의 스마트 기기 UI 맥락을 실시간으로 해석하고 안전하게 우회하도록 지원하는 **구글의 GEAR (Gemini Enterprise Agent Ready)** 아키텍처 지침을 충실히 반영하여 개발되었습니다:
 1. **Multi-modal Grounding (멀티모달 시각적 결합)**: 사용자가 업로드한 불일치 스크린샷 내 텍스트 정보와 실제 물리 버튼 영역을 제미나이 비전 2D 좌표 검출(`[ymin, xmin, ymax, xmax]`)로 동적 바인딩하여, 시각적 실증성(Grounding)을 극대화한 정밀 Spotlight 오버레이를 구동합니다.
-2. **Structured JSON Output Schema (구조화된 출력 제어)**: 구글의 최신 SDK를 기반으로 Gemini 1.5 Flash 호출 시 Zod 및 JSON Response Schema 규격을 강제 연동함으로써, 부모님 세대가 마주할 수 있는 인공지능의 환각 현상(Hallucination)과 데이터 불정합 가능성을 실시간 구조화 검증으로 완벽히 차단합니다.
+2. **Structured JSON Output Schema (구조화된 출력 제어)**: 구글의 최신 SDK를 기반으로 Gemini 3.5 Flash 호출 시 Zod 및 JSON Response Schema 규격을 강제 연동함으로써, 부모님 세대가 마주할 수 있는 인공지능의 환각 현상(Hallucination)과 데이터 불정합 가능성을 실시간 구조화 검증으로 완벽히 차단합니다.
 3. **Privacy-First Agent Guardrails (개인정보 보안 가드레일)**: 부모님의 개인정보 오남용을 원천 예방하기 위해, 업로드된 캡처 스크린과 입력 정보 등을 별도의 영구 데이터베이스(DB)에 영속하지 않고 인메모리(In-Memory) 세션 기반으로 일회성 처리하는 무중단 개인정보 가드레일을 구축했습니다.
 
 ---
@@ -103,7 +103,7 @@ StepCue는 단순히 문답을 주고받는 정적인 챗봇 형태를 탈피하
 *   **문제 발생 상황**: 시니어가 안내서를 보던 중 자기 스마트폰 화면에 이상한 경고창이나 팝업창이 떠서 더 이상 진행을 못 하는 상황.
 *   **기능 동작**: 
     *   "화면이 달라요" 버튼이나 음성 명령을 하면 진단창(Bottom Sheet)이 올라오고, 사용자는 현재 자기 폰의 스크린샷을 찍어서 업로드합니다.
-    *   **Gemini 1.5 Flash의 멀티모달 비전** 성능을 활용하여 현재 단계의 목적지에 매핑되는 최우선 영역을 2D 좌표 array `[ymin, xmin, ymax, xmax]` 형식으로 즉시 검출해 냅니다.
+    *   **Gemini 3.5 Flash의 멀티모달 비전** 성능을 활용하여 현재 단계의 목적지에 매핑되는 최우선 영역을 2D 좌표 array `[ymin, xmin, ymax, xmax]` 형식으로 즉시 검출해 냅니다.
     *   **CSS 무한 스포트라이트 효과**: 검출된 좌표 영역을 제외한 나머지 모든 화면을 부드러운 검은색 암막(`box-shadow: 0 0 0 9999px`)으로 덮어버리고, **찾아야 할 버튼만 극적으로 밝게 스포트라이트 조명을 쏩니다.** 조명 가운데에는 빨간색 📍 조준선 펄스 애니메이션이 활성화되어 어르신이 어디를 터치해야 하는지 본능적으로 즉시 인지하도록 돕습니다.
 *   **원클릭 데모 프리셋**:
     *   심사위원 및 일반 사용자의 테스트 편의를 위해, 실제 상황을 모방한 고해상도 모형 화면 2개(정부24 인증 오류 창, 기후동행카드 은행 계좌 실명인증 오류 화면)를 SVGs 기반 바이너리로 내장하여 원클릭으로 완벽하게 테스트할 수 있도록 지원합니다.
