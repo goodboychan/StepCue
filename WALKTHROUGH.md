@@ -39,6 +39,7 @@ graph TD
 To provide hands-free operation and ease of use for senior citizens, we integrated the browser-native **HTML5 Web Speech API** directly into [page.tsx](src/app/page.tsx):
 
 *   **Auto-Voice Coach (Text-to-Speech)**: Reads the active step's instructions, expected results, and completed triggers in natural Korean (`ko-KR`) when navigating cards. It automatically reads out custom recovery prescriptions if they are fetched from Gemini.
+*   **Dynamic Voice Customization**: Available Korean synthesized voices (such as high-fidelity Google Online Voices, Microsoft Yuna, Heami, SunHi, or InJoon) are dynamically fetched from the user's browser environment. We added a **Voice Selector** allowing users to switch between female, male, or premium voice tones. Technical names are mapped to warm, friendly Korean labels (e.g., `👩 다정한 여성음성 (유나)`, `👨 신뢰감 남성음성 (인준)`).
 *   **Hands-Free Voice Navigation (Speech-to-Text)**: A real-time voice listener that triggers actions based on voice commands:
     *   *"다음"* / *"완료"* &rarr; Advances to the next card.
     *   *"이전"* / *"뒤로"* &rarr; Goes back to the previous step.
