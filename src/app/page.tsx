@@ -221,6 +221,8 @@ export default function Home() {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [recoveryCoordinates, setRecoveryCoordinates] = useState<[number, number, number, number] | null>(null);
   const [sosCopied, setSosCopied] = useState<boolean>(false);
+  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
+  const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
 
   // General Loading & Error
   const [isLoading, setIsLoading] = useState(false);
@@ -229,6 +231,25 @@ export default function Home() {
   // Refs for file inputs
   const guideFileInputRef = useRef<HTMLInputElement>(null);
   const screenshotFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Populate available Korean voices
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const updateVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const koVoices = voices.filter(v => v.lang.includes('ko') || v.lang.includes('KO'));
+        setAvailableVoices(koVoices);
+        if (koVoices.length > 0 && !selectedVoiceName) {
+          // Find Heami, Google, Yuna or fall back to first Korean voice
+          const bestVoice = koVoices.find(v => v.name.includes('Google') || v.name.includes('Yuna') || v.name.includes('Heami')) || koVoices[0];
+          setSelectedVoiceName(bestVoice.name);
+        }
+      };
+
+      updateVoices();
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, []);
 
   // Voice Coach Text-To-Speech Effect
   React.useEffect(() => {
@@ -245,6 +266,14 @@ export default function Home() {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ko-KR';
         utterance.rate = 1.0;
+        
+        if (selectedVoiceName && availableVoices.length > 0) {
+          const matchedVoice = availableVoices.find(v => v.name === selectedVoiceName);
+          if (matchedVoice) {
+            utterance.voice = matchedVoice;
+          }
+        }
+        
         window.speechSynthesis.speak(utterance);
       }
     } else {
@@ -252,7 +281,7 @@ export default function Home() {
         window.speechSynthesis.cancel();
       }
     }
-  }, [currentStepIndex, appState, isVoiceCoachActive, generatedData, customRecoveryGuidance]);
+  }, [currentStepIndex, appState, isVoiceCoachActive, generatedData, customRecoveryGuidance, selectedVoiceName, availableVoices]);
 
   // Voice Commands Control (Speech Recognition)
   React.useEffect(() => {
@@ -277,6 +306,14 @@ export default function Home() {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(msg);
                 utterance.lang = 'ko-KR';
+                
+                if (selectedVoiceName && availableVoices.length > 0) {
+                  const matchedVoice = availableVoices.find(v => v.name === selectedVoiceName);
+                  if (matchedVoice) {
+                    utterance.voice = matchedVoice;
+                  }
+                }
+                
                 window.speechSynthesis.speak(utterance);
               }
             };
@@ -800,7 +837,7 @@ export default function Home() {
             {/* Main Action Card block */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* Concept 2: Voice Control Settings Panel */}
+               {/* Concept 2: Voice Control Settings Panel */}
               <div style={{ 
                 display: 'flex', 
                 gap: '12px', 
@@ -836,6 +873,39 @@ export default function Home() {
                   }}></span>
                   <span>{isListening ? '🎤 네, 말씀하세요' : '🎤 말로 움직이기'}</span>
                 </button>
+
+                {availableVoices.length > 1 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 700 }}>🗣️ 목소리:</span>
+                    <select
+                      value={selectedVoiceName}
+                      onChange={(e) => setSelectedVoiceName(e.target.value)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border)',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                        backgroundColor: '#f8fafc',
+                        cursor: 'pointer',
+                        outline: 'none'
+                      }}
+                    >
+                      {availableVoices.map((v) => (
+                        <option key={v.name} value={v.name}>
+                          {v.name.includes('Google') ? '✨ 구글 고음질 여성음성' : 
+                           v.name.includes('Yuna') ? '👩 다정한 여성음성 (유나)' : 
+                           v.name.includes('Heami') ? '👩 단정한 여성음성 (혜미)' : 
+                           v.name.includes('SunHi') ? '👩 밝은 여성음성 (선희)' : 
+                           v.name.includes('InJoon') ? '👨 신뢰감 남성음성 (인준)' : 
+                           v.name.replace(/Microsoft|Korean|Korea|Desktop/g, '').trim()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <p style={{ fontSize: '12px', color: 'var(--text-light)', width: '100%', margin: '4px 0 0 4px', fontWeight: 500 }}>
                   * 마이크를 켜고 "다음", "이전", "도와줘", "다시" 라고 말해서 화면을 제어할 수 있어요.
                 </p>
