@@ -92,18 +92,17 @@ const DEMO_FIXTURE_1_CARDS: GenerationResponse = {
 };
 
 const DEMO_FIXTURE_2_INPUT = {
-  goal: '온라인에서 생활지원 확인서를 발급하고 PDF로 저장하고 싶어요.',
-  guideText: `[생활지원 확인서 온라인 발급 안내 가이드]
-- 이용 사이트: 정부 서비스 포털 (또는 생활지원시스템 홈페이지)
-- 발급 절차:
-  1. 사이트 첫 화면을 여십시오.
-  2. 화면 우측 상단의 돋보기 모양 검색란에 '생활지원 확인서'를 입력하고 검색합니다.
-  3. 검색 결과 목록에서 '생활지원 확인서 온라인 발급'이 적힌 항목을 선택합니다.
-  4. 발급을 신청하기 위해 본인인증(공동인증서, 간편인증 또는 스마트폰 인증)을 하나 선택하여 인증을 완료합니다.
-  5. 발급이 승인되면 'PDF 저장' 버튼을 누르고 컴퓨터 혹은 스마트폰에 저장된 파일을 확인합니다.
+  goal: '기후동행카드 미사용 잔액을 내 통장 계좌로 돌려받고 싶어요.',
+  guideText: `[서울시 기후동행카드 미사용 잔액 환급 가이드]
+- 이용 사이트: 티머니 카드&페이 홈페이지 (또는 모바일티머니 앱)
+- 환급 신청 절차:
+  1. 티머니 홈페이지에 로그인한 뒤 마이페이지로 이동합니다.
+  2. 메뉴 중에서 '기후동행카드 환급신청'을 찾아서 누릅니다.
+  3. 환급금을 돌려받을 본인 명의의 환급 은행과 계좌번호를 정확히 적어줍니다.
+  4. 바로 아래 '예금주 조회' 버튼을 눌러 본인 실명 인증이 정상 처리되었는지 확인합니다.
+  5. 화면 맨 하단의 '환급 신청하기' 버튼을 누르면 접수가 성공적으로 처리됩니다.
 - 주의 사항:
-  1. 개인 인증번호나 비밀번호가 타인에게 보이지 않도록 주의하십시오.
-  2. 저희 CivicCue는 어떠한 경우에도 사용자의 금융 비밀번호나 인증번호를 직접 요청하지 않습니다.`,
+  1. 반드시 기후동행카드 등록자 실사용자 본인 명의의 은행 계좌만 등록 가능합니다. 자녀 등 타인 계좌는 인증 실패 처리됩니다.`,
   accessibilityMode: {
     simpleLanguage: true,
     largeText: true,
@@ -112,77 +111,65 @@ const DEMO_FIXTURE_2_INPUT = {
 };
 
 const DEMO_FIXTURE_2_CARDS: GenerationResponse = {
-  title: '생활지원 확인서 온라인 발급 및 PDF 저장',
+  title: '기후동행카드 미사용 잔액 환급 신청',
   cards: [
     {
       stepNumber: 1,
-      action: '사이트 첫 화면을 여세요.',
-      screenAnchor: '인터넷 브라우저 주소창',
-      expectedResult: '포털 사이트 홈 화면이 정상적으로 나타났나요?',
-      completionQuestion: '포털 사이트 홈 화면이 정상적으로 나타났나요?',
-      recoveryInstruction: '주소창에 포털 주소를 정확히 입력하거나 검색창에 포털을 검색해 입장하세요.',
-      sourceEvidence: '1. 사이트 첫 화면을 여십시오.',
-      sourceLocation: '발급 가이드 1단계',
+      action: '티머니 홈페이지에 로그인하세요.',
+      screenAnchor: '로그인 영역 및 비밀번호 입력창',
+      expectedResult: '로그인이 성공하고 마이페이지 화면이 나타났나요?',
+      completionQuestion: '티머니 카드&페이 로그인을 성공하셨나요?',
+      recoveryInstruction: '아이디와 패스워드가 기억나지 않으시면 가입 시 등록한 정보를 다시 찾아보세요.',
+      sourceEvidence: '1. 티머니 홈페이지에 로그인한 뒤 마이페이지로 이동합니다.',
+      sourceLocation: '환급 가이드 1단계',
       missingInformationWarning: null,
       safetyNotice: null
     },
     {
       stepNumber: 2,
-      action: '화면에서 돋보기 모양을 찾으세요.',
-      screenAnchor: '화면 우측 상단 돋보기 아이콘',
-      expectedResult: '글자를 입력할 수 있는 빈 칸이 생겼나요?',
-      completionQuestion: '화면 우측 상단에서 돋보기 모양을 찾으셨나요?',
-      recoveryInstruction: '오른쪽 위 상단 메뉴에 돋보기(🔍) 모양의 그림을 찾아 누르세요.',
-      sourceEvidence: '2. 화면 우측 상단의 돋보기 모양 검색란에...',
-      sourceLocation: '발급 가이드 2단계',
+      action: '‘기후동행카드 환급신청’ 메뉴를 누르세요.',
+      screenAnchor: '마이페이지 환급/환불 메뉴 링크',
+      expectedResult: '은행명과 계좌번호를 적을 수 있는 입력 상자들이 보이나요?',
+      completionQuestion: '기후동행카드 환급신청 메뉴를 잘 찾아서 입장하셨나요?',
+      recoveryInstruction: '마이페이지 전체 메뉴판을 찬찬히 훑어보시고, \'기후동행카드 환급신청\' 문구를 터치해 보세요.',
+      sourceEvidence: '2. 메뉴 중에서 \'기후동행카드 환급신청\'을 찾아서 누릅니다.',
+      sourceLocation: '환급 가이드 2단계',
       missingInformationWarning: null,
       safetyNotice: null
     },
     {
       stepNumber: 3,
-      action: '‘생활지원 확인서’를 입력하세요.',
-      screenAnchor: '검색 입력칸',
-      expectedResult: '생활지원 확인서 관련 검색 결과 목록이 화면에 보이나요?',
-      completionQuestion: '생활지원 확인서를 검색창에 입력하고 검색 버튼을 누르셨나요?',
-      recoveryInstruction: '글자가 틀리지 않게 정확히 \'생활지원 확인서\'라고 쓰고 돋보기 모양을 누르세요.',
-      sourceEvidence: '...\'생활지원 확인서\'를 입력하고 검색합니다.',
-      sourceLocation: '발급 가이드 2단계',
+      action: '환급금을 받을 은행을 선택하세요.',
+      screenAnchor: '환급 은행 선택 목록 상자',
+      expectedResult: '선택하신 주거래 은행 이름이 상자에 올바르게 선택되었나요?',
+      completionQuestion: '환급받으실 은행명을 목록에서 찾아서 선택하셨나요?',
+      recoveryInstruction: '농협, 국민, 신한, 우리 등 자주 쓰시는 은행 목록 상자를 누르고 본인의 은행을 선택하세요.',
+      sourceEvidence: '3. 환급금을 돌려받을 본인 명의의 환급 은행과...',
+      sourceLocation: '환급 가이드 3단계',
       missingInformationWarning: null,
       safetyNotice: null
     },
     {
       stepNumber: 4,
-      action: '‘온라인 발급’이 적힌 항목을 누르세요.',
-      screenAnchor: '검색 결과 목록의 링크',
-      expectedResult: '본인인증을 요구하는 화면으로 전환되었나요?',
-      completionQuestion: '‘생활지원 확인서 온라인 발급’이라고 적힌 항목을 누르셨나요?',
-      recoveryInstruction: '화면에 나타난 여러 검색결과 중에서 \'온라인 발급\'이 쓰인 제목을 선택하세요.',
-      sourceEvidence: '3. 검색 결과 목록에서 \'생활지원 확인서 온라인 발급\'이 적힌 항목을 선택합니다.',
-      sourceLocation: '발급 가이드 3단계',
+      action: '계좌번호를 입력하고 ‘예금주 조회’를 누르세요.',
+      screenAnchor: '계좌번호 입력칸 및 예금주 조회 버튼',
+      expectedResult: '조회 버튼을 눌렀을 때 오류 창 없이 예금주명이 정상적으로 뜨나요?',
+      completionQuestion: '계좌번호 숫자들을 틀림없이 입력한 뒤 예금주 조회 단추를 누르셨나요?',
+      recoveryInstruction: '반드시 기후동행카드 가입자 본인의 통장 계좌여야만 조회에 성공합니다. 숫자만 공백 없이 적고 조회 버튼을 누르세요.',
+      sourceEvidence: '...\'예금주 조회\' 버튼을 눌러 본인 실명 인증이 정상 처리되었는지 확인합니다. - 주의 사항: 1. 반드시 기후동행카드 등록자 실사용자 본인 명의의 은행 계좌만 등록 가능합니다.',
+      sourceLocation: '환급 가이드 4단계 및 주의사항 1번',
       missingInformationWarning: null,
-      safetyNotice: null
+      safetyNotice: '주의: 다른 가족(자녀 등) 명의의 계좌를 적으시면 예금주 조회 오류가 발생해 진행되지 않습니다.'
     },
     {
       stepNumber: 5,
-      action: '본인인증 방법을 하나 선택하세요.',
-      screenAnchor: '인증 방법 선택 화면',
-      expectedResult: '인증 완료 후 생활지원 확인서 신청이 접수 및 승인되었나요?',
-      completionQuestion: '간편인증이나 공동인증서 등 원하는 본인인증을 진행하셨나요?',
-      recoveryInstruction: '가장 익숙한 스마트폰 인증이나 간편인증(카카오톡, 토스 등)을 선택해 인증을 마쳐보세요.',
-      sourceEvidence: '4. 발급을 신청하기 위해 본인인증(공동인증서, 간편인증 또는 스마트폰 인증)을 하나 선택하여 인증을 완료합니다. - 주의 사항: 1. 개인 인증번호나 비밀번호가 타인에게 보이지 않도록 주의하십시오.',
-      sourceLocation: '발급 가이드 4단계 및 주의사항 1번',
-      missingInformationWarning: null,
-      safetyNotice: '주의: 인증번호나 비밀번호가 보이는 화면은 업로드하지 마세요. CivicCue는 인증번호를 요청하지 않습니다.'
-    },
-    {
-      stepNumber: 6,
-      action: '‘PDF 저장’을 누르고 저장된 파일을 확인하세요.',
-      screenAnchor: '화면 하단 \'PDF 저장\' 버튼',
-      expectedResult: '다운로드 목록에 \'생활지원_확인서.pdf\' 파일이 잘 저장되었나요?',
-      completionQuestion: '‘PDF 저장’ 버튼을 누른 후 다운로드 폴더에서 서류를 확인하셨나요?',
-      recoveryInstruction: '파일을 다운로드한 뒤 스마트폰의 \'내 파일\' 앱이나 컴퓨터의 \'다운로드\' 폴더를 열어보세요.',
-      sourceEvidence: '5. 발급이 승인되면 \'PDF 저장\' 버튼을 누르고 컴퓨터 혹은 스마트폰에 저장된 파일을 확인합니다.',
-      sourceLocation: '발급 가이드 5단계',
+      action: '‘환급 신청하기’ 버튼을 누르세요.',
+      screenAnchor: '화면 맨 아래 신청하기 녹색 단추',
+      expectedResult: '환급 신청 접수 완료 안내 팝업이나 완료 문구가 표시되었나요?',
+      completionQuestion: '‘환급 신청하기’ 버튼을 눌러 최종 접수를 마쳤나요?',
+      recoveryInstruction: '화면 아래로 내려서 초록색 버튼으로 크게 쓰여진 \'환급 신청하기\'를 꾹 눌러 완료하세요.',
+      sourceEvidence: '5. 화면 맨 하단의 \'환급 신청하기\' 버튼을 누르면 접수가 성공적으로 처리됩니다.',
+      sourceLocation: '환급 가이드 5단계',
       missingInformationWarning: null,
       safetyNotice: null
     }
@@ -568,8 +555,8 @@ export default function Home() {
       svgContent = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%231e293b"/><text x="40" y="60" fill="%23ffffff" font-family="sans-serif" font-size="20" font-weight="bold">정부24 민원 서류 신청 화면 (샘플)</text><rect x="40" y="100" width="520" height="2" fill="%23334155"/><text x="40" y="150" fill="%2394a3b8" font-family="sans-serif" font-size="14">현재 상태: 본인 인증 및 전자 서명 단계</text><rect x="40" y="180" width="340" height="48" rx="6" fill="%23334155" stroke="%23475569" stroke-width="2"/><text x="60" y="210" fill="%23ffffff" font-family="sans-serif" font-size="14">주민등록 등본 교부 신청</text><rect x="400" y="180" width="160" height="48" rx="6" fill="%232563eb"/><text x="445" y="210" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold">인증 확인</text><rect x="40" y="250" width="520" height="110" rx="8" fill="%23ef4444" fill-opacity="0.1" stroke="%23ef4444" stroke-width="1.5"/><text x="60" y="285" fill="%23fca5a5" font-family="sans-serif" font-size="14" font-weight="bold">⚠️ 오류: 간편인증 모듈 호출에 실패했습니다.</text><text x="60" y="315" fill="%23fca5a5" font-family="sans-serif" font-size="12">브라우저 쿠키 설정 혹은 팝업 차단이 활성화되어 있는지 확인해 주십시오.</text><text x="60" y="335" fill="%23fca5a5" font-family="sans-serif" font-size="12">오류 코드: AUTH_ERR_403</text></svg>`;
       setSelectedProblem('오류 메시지나 경고창이 나타났어요');
     } else {
-      svgContent = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%230f172a"/><text x="40" y="60" fill="%2338bdf8" font-family="sans-serif" font-size="22" font-weight="bold">Google Cloud Jam - 프로젝트 업로드</text><rect x="40" y="90" width="520" height="1.5" fill="%231e293b"/><text x="40" y="130" fill="%2394a3b8" font-family="sans-serif" font-size="14">최종 과제물 세 가지 요소를 업로드해 주십시오.</text><rect x="40" y="160" width="520" height="140" rx="8" fill="%231e293b" stroke="%23334155" stroke-dasharray="4 4"/><text x="180" y="220" fill="%2394a3b8" font-family="sans-serif" font-size="15" font-weight="bold">📂 여기에 데모 영상 및 코드 파일 끌어다 놓기</text><text x="210" y="250" fill="%2364748b" font-family="sans-serif" font-size="13">지원 규격: mp4, zip, pdf (최대 100MB)</text><rect x="360" y="320" width="200" height="48" rx="24" fill="%232563eb"/><text x="410" y="350" fill="%23ffffff" font-family="sans-serif" font-size="15" font-weight="bold">제출 완료하기 🚀</text></svg>`;
-      setSelectedProblem('버튼이나 메뉴가 안 보여요');
+      svgContent = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%230f172a"/><text x="40" y="60" fill="%2322c55e" font-family="sans-serif" font-size="22" font-weight="bold">티머니 기후동행카드 미사용 잔액 환급</text><rect x="40" y="90" width="520" height="1.5" fill="%231e293b"/><text x="40" y="130" fill="%2394a3b8" font-family="sans-serif" font-size="14">환급금을 지급받으실 은행 정보와 계좌번호를 등록해 주십시오.</text><text x="40" y="175" fill="%2364748b" font-family="sans-serif" font-size="12" font-weight="bold">환급 은행</text><rect x="40" y="185" width="240" height="40" rx="6" fill="%231e293b" stroke="%23334155" stroke-width="1.5"/><text x="56" y="210" fill="%2394a3b8" font-family="sans-serif" font-size="14">신한은행 (SHINHAN)</text><text x="310" y="175" fill="%2364748b" font-family="sans-serif" font-size="12" font-weight="bold">계좌번호 (숫자만 입력)</text><rect x="310" y="185" width="250" height="40" rx="6" fill="%231e293b" stroke="%23334155" stroke-width="1.5"/><text x="326" y="210" fill="%23f8fafc" font-family="sans-serif" font-size="14">110432567890</text><rect x="40" y="245" width="200" height="42" rx="6" fill="%231e293b" stroke="%23ef4444" stroke-width="2"/><text x="95" y="271" fill="%23ef4444" font-family="sans-serif" font-size="14" font-weight="bold">예금주 조회</text><rect x="260" y="245" width="300" height="42" rx="6" fill="%23ef4444" fill-opacity="0.1" stroke="%23ef4444" stroke-width="1"/><text x="275" y="270" fill="%23fca5a5" font-family="sans-serif" font-size="12">⚠️ 에러: 입력하신 계좌와 실물 소유주 명의가 다릅니다.</text><rect x="360" y="320" width="200" height="48" rx="24" fill="%2322c55e"/><text x="410" y="350" fill="%23ffffff" font-family="sans-serif" font-size="15" font-weight="bold">환급 신청하기 🚀</text></svg>`;
+      setSelectedProblem('오류 메시지나 경고창이 나타났어요');
     }
     
     setScreenshotFile({
@@ -753,7 +740,7 @@ export default function Home() {
                   onClick={() => loadDemo(2)}
                   style={{ fontSize: '15px', height: '56px', padding: '0 8px' }}
                 >
-                  예시 2 - 부모님 온라인 서류 발급
+                  예시 2 - 기후동행카드 환급 신청
                 </button>
               </div>
             </form>
@@ -1285,7 +1272,7 @@ export default function Home() {
                   style={{ fontSize: '13px', padding: '10px', height: 'auto', border: '1px dashed var(--primary)', backgroundColor: '#eff6ff', fontWeight: 600, color: 'var(--primary)' }}
                   onClick={() => loadPresetScreenshot(2)}
                 >
-                  🚀 예시 2: 해커톤 프로젝트 제출 캡처
+                  🚀 예시 2: 기후동행카드 계좌 조회 오류
                 </button>
               </div>
             </div>
