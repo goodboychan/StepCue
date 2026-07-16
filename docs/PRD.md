@@ -70,6 +70,12 @@ graph TD
         *   `webkitSpeechRecognition`을 사용한 음성 컨트롤러 (STT).
 *   **Deployment**: Google Cloud Build & Google Cloud Run (Serverless 인프라)
 
+### 3.2 GEAR (Gemini Enterprise Agent Ready) 프레임워크 설계 표준 준수
+StepCue는 단순히 문답을 주고받는 정적인 챗봇 형태를 탈피하여, 사용자의 스마트 기기 UI 맥락을 실시간으로 해석하고 안전하게 우회하도록 지원하는 **구글의 GEAR (Gemini Enterprise Agent Ready)** 아키텍처 지침을 충실히 반영하여 개발되었습니다:
+1. **Multi-modal Grounding (멀티모달 시각적 결합)**: 사용자가 업로드한 불일치 스크린샷 내 텍스트 정보와 실제 물리 버튼 영역을 제미나이 비전 2D 좌표 검출(`[ymin, xmin, ymax, xmax]`)로 동적 바인딩하여, 시각적 실증성(Grounding)을 극대화한 정밀 Spotlight 오버레이를 구동합니다.
+2. **Structured JSON Output Schema (구조화된 출력 제어)**: 구글의 최신 SDK를 기반으로 Gemini 1.5 Flash 호출 시 Zod 및 JSON Response Schema 규격을 강제 연동함으로써, 부모님 세대가 마주할 수 있는 인공지능의 환각 현상(Hallucination)과 데이터 불정합 가능성을 실시간 구조화 검증으로 완벽히 차단합니다.
+3. **Privacy-First Agent Guardrails (개인정보 보안 가드레일)**: 부모님의 개인정보 오남용을 원천 예방하기 위해, 업로드된 캡처 스크린과 입력 정보 등을 별도의 영구 데이터베이스(DB)에 영속하지 않고 인메모리(In-Memory) 세션 기반으로 일회성 처리하는 무중단 개인정보 가드레일을 구축했습니다.
+
 ---
 
 ## 4. Key Functional Requirements (핵심 기능 정의)
