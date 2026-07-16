@@ -39,6 +39,12 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  max-width: 960px; /* Beautiful, centered layout on desktop browsers */
+  margin: 0 auto;
+  background-color: var(--surface);
+  box-shadow: 0 10px 50px rgba(15, 23, 42, 0.08);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 /* Header */
